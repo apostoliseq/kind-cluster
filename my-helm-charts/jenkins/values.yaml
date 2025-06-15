@@ -1,0 +1,24 @@
+controller:
+  image: "jenkins/jenkins"
+  tag: "2.514-jdk21"
+  imagePullPolicy: "Always"
+  
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "2000m"
+      memory: "4096Mi"
+
+  serviceType: NodePort
+  servicePort: 8080
+  targetPort: 8080
+  nodePort: 32080
+
+  # List of plugins to be install during Jenkins controller start
+  installPlugins:
+    - kubernetes:3937.vd7b_82db_e347b_
+    - workflow-aggregator:596.v8c21c963d92d
+    - git:5.7.0
+    - configuration-as-code:1971.vf9280461ea_89
