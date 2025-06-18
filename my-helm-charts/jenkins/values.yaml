@@ -16,9 +16,13 @@ controller:
   targetPort: 8080
   nodePort: 32080
 
+  adminUser: "admin"
+  adminPassword: "admin"
+  
   # List of plugins to be install during Jenkins controller start
   installPlugins:
     - kubernetes:3937.vd7b_82db_e347b_
     - workflow-aggregator:596.v8c21c963d92d
     - git:5.7.0
     - configuration-as-code:1971.vf9280461ea_89
+    - dark-theme:567.v9d3ca_a_3142f5
