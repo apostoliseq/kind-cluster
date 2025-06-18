@@ -12,3 +12,9 @@ nodes:
     protocol: TCP
 - role: worker
   image: kindest/node:v1.32.5
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."192.168.138.154:5000"]
+    endpoint = ["http://192.168.138.154:5000"]
+  [plugins."io.containerd.grpc.v1.cri".registry.configs."192.168.138.154:5000".tls]
+    insecure_skip_verify = true
