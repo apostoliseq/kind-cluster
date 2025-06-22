@@ -30,3 +30,4 @@ controller:
     - git:5.7.0
     - configuration-as-code:1971.vf9280461ea_89
     - dark-theme:567.v9d3ca_a_3142f5
+    - ws-cleanup:0.48
