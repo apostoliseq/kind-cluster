@@ -23,11 +23,73 @@ controller:
   adminUser: "admin"
   adminPassword: "admin"
   
+  additionalSecrets:
+    - name: nexus-jenkins-username
+      value: admin
+    - name: nexus-jenkins-password
+      value: admin
+
   # List of plugins to be install during Jenkins controller start
   installPlugins:
     - kubernetes:4353.vb_47977da_9417 
-    - workflow-aggregator:608.v67378e9d3db_1 
+    - workflow-aggregator:608.v67378e9d3db_1
+    - workflow-multibranch:806.vb_b_688f609ee9
     - git:5.7.0
     - configuration-as-code:1971.vf9280461ea_89
     - dark-theme:567.v9d3ca_a_3142f5
     - ws-cleanup:0.48
+    - job-dsl:1.93
+
+  JCasC:
+    defaultConfig: true
+    configScripts:
+      jobs: |
+        jobs:
+          - script: |
+              multibranchPipelineJob('java-maven-app') {
+                branchSources {
+                  git {
+                    id('java-maven-app-source')
+                    remote('https://github.com/apostoliseq/java-maven-app.git')
+                    credentialsId('')
+                  }
+                }
+                orphanedItemStrategy {
+                  discardOldItems {
+                    numToKeep(5)
+                  }
+                }
+                triggers {
+                  periodicFolderTrigger {
+                    interval('30m')
+                  }
+                }
+              }
+      
+      global-libraries: |
+        unclassified:
+          globalLibraries:
+            libraries:
+              - name: "shared-library"
+                defaultVersion: "main"
+                implicit: false
+                allowVersionOverride: true
+                includeInChangesets: false
+                retriever:
+                  modernSCM:
+                    scm:
+                      git:
+                        remote: "https://github.com/apostoliseq/jenkins-shared-library.git"
+                        credentialsId: ""
+
+      credentials: |
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - usernamePassword:
+                      scope: GLOBAL
+                      id: "nexus-jenkins"
+                      username: "${nexus-jenkins-username}"
+                      password: "${nexus-jenkins-password}"
+                      description: "Nexus credentials for Jenkins"
