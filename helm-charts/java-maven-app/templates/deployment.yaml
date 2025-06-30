@@ -13,11 +13,11 @@ spec:
   replicas: {{ .Values.deployment.replicaCount }}
   selector:
     matchLabels:
-      app: java-maven-app-pod
+      app: {{ .Values.deployment.podName}}
   template:
     metadata:
       labels:
-        app: java-maven-app-pod
+        app: {{ .Values.deployment.podName}}
     spec:
       imagePullSecrets:
       - name: {{ .Values.dockerRegistry.secretName }}

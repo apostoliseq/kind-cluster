@@ -21,14 +21,15 @@ namespace: "apps"
 deployment:
   name: "java-maven-app-deployment"
   replicaCount: 1
+  podName: "java-maven-app-pod"
 
   # Container resources
   resources:
     requests:
-      memory: "10Mi"
+      memory: "256Mi"
       cpu: "10m"
     limits:
-      memory: "100Mi"
+      memory: "512Mi"
       cpu: "100m"
 
   # Container port
