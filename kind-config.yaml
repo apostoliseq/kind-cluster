@@ -3,6 +3,8 @@ apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
   image: kindest/node:v1.32.5
+- role: worker
+  image: kindest/node:v1.32.5
   extraPortMappings:
   - containerPort: 32000
     hostPort: 32000
@@ -10,8 +12,6 @@ nodes:
   - containerPort: 32080
     hostPort: 32080
     protocol: TCP
-- role: worker
-  image: kindest/node:v1.32.5
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."192.168.138.154:5000"]
