@@ -357,7 +357,7 @@ controller:
       seed-job: |
         jobs:
           - script: |
-              freeStyleJob('seed-job-loader')
+              freeStyleJob('seed-job-loader') {
                 displayName('Job Definitions Loader')
                 description('Automatically loads job definitions from Github')
 
