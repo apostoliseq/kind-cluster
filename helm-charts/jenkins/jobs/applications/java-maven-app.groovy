@@ -1,4 +1,4 @@
-multibranchPipelineJob('core/applications/java-maven-app') {
+multibranchPipelineJob('microservices/java-maven-app') {
     displayName('Java Maven Application')
     description('Java Maven app with automated deployment to Kubernetes')
 
