@@ -346,40 +346,31 @@ controller:
       simple-jobs: |
         jobs:
           - script: |
-              folder('helm-charts') {
-                displayName('Helm Charts')
-                description('All Helm chart related CI/CD jobs')
-              }
-              folder('helm-charts/applications') {
-                displayName('Applications')
-                description('Application deployment pipelines')
-              }
+              freeStyleJob('seed-job-loader')
+              displayName('Job Definitions Loader')
+              description('Automatically loads job definitions from Github')
 
-              multibranchPipelineJob('helm-charts/applications/java-maven-app') {
-                displayName('Java Maven App')
-                description('Java Maven App job')
-
-                branchSources {
-                  git {
-                    id('java-maven-app-source')
-                    remote('https://github.com/apostoliseq/java-maven-app.git')
-                    credentialsId('')
-                  }
-                }
-
-                orphanedItemStrategy {
-                  discardOldItems {
-                  numToKeep(5)
-                  }
-                }
-
-                triggers {
-                  periodicFolderTrigger {
-                    interval('30m')
+              scm {
+                git {
+                  remote {
+                    url('https://github.com/apostoliseq/kind-cluster.git')
+                    credentials('')
                   }
                 }
               }
 
+              triggers {
+                scm('H/5 * * * *')
+              }
+
+              steps {
+                dsl {
+                  external('jenkins/jobs/**/*.groovy')
+                  removeAction('DELETE')
+                  removeViewAction('DELETE')
+                  ignoreExisting(false)
+                }
+              }
       # global-libraries: |
       #   unclassified:
       #     globalLibraries:

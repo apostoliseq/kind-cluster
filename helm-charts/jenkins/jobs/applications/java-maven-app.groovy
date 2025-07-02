@@ -1,4 +1,7 @@
 multibranchPipelineJob('java-maven-app') {
+    displayName('Java Maven Application')
+    description('Java Maven app with automated deployment to Kubernetes')
+
     branchSources {
         git {
             id('java-maven-app-source')
