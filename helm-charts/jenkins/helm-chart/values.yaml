@@ -340,29 +340,61 @@ controller:
     # - https://acme.org/jenkins.yaml
     # Remote URL:s for configuration files.
     configScripts:
-    #  welcome-message: |
-    #    jenkins:
-    #      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
-      jobs: |
+      welcome-message: |
+       jenkins:
+         systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
+      simple-jobs: |
         jobs:
           - script: |
-              {{ lookup('template', ('../jobs/java-maven-app.groovy') | indent(width=10, first=False) }}
+              folder('helm-charts') {
+                displayName('Helm Charts')
+                description('All Helm chart related CI/CD jobs')
+              }
+              folder('helm-charts/applications') {
+                displayName('Applications')
+                description('Application deployment pipelines')
+              }
 
-      global-libraries: |
-        unclassified:
-          globalLibraries:
-            libraries:
-              - name: "shared-library"
-                defaultVersion: "main"
-                implicit: false
-                allowVersionOverride: true
-                includeInChangesets: false
-                retriever:
-                  modernSCM:
-                    scm:
-                      git:
-                        remote: "https://github.com/apostoliseq/jenkins-shared-library.git"
-                        credentialsId: ""
+              multibranchPipelineJob('helm-charts/applications/java-maven-app') {
+                displayName('Java Maven App')
+                description('Java Maven App job')
+
+                branchSources {
+                  git {
+                    id('java-maven-app-source')
+                    remote('https://github.com/apostoliseq/java-maven-app.git')
+                    credentialsId('')
+                  }
+                }
+
+                orphanedItemStrategy {
+                  discardOldItems {
+                  numToKeep(5)
+                  }
+                }
+
+                triggers {
+                  periodicFolderTrigger {
+                    interval('30m')
+                  }
+                }
+              }
+
+      # global-libraries: |
+      #   unclassified:
+      #     globalLibraries:
+      #       libraries:
+      #         - name: "shared-library"
+      #           defaultVersion: "main"
+      #           implicit: false
+      #           allowVersionOverride: true
+      #           includeInChangesets: false
+      #           retriever:
+      #             modernSCM:
+      #               scm:
+      #                 git:
+      #                   remote: "https://github.com/apostoliseq/jenkins-shared-library.git"
+      #                   credentialsId: ""
 
       credentials: |
         credentials:
@@ -375,6 +407,7 @@ controller:
                       username: "${nexus-jenkins-username}"
                       password: "${nexus-jenkins-password}"
                       description: "Nexus credentials for Jenkins"
+
     # Allows adding to the top-level security JCasC section. For legacy,  default the chart includes apiToken configurations
     security:
       apiToken:
