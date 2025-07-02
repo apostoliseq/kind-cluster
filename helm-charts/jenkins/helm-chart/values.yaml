@@ -343,32 +343,45 @@ controller:
       welcome-message: |
        jenkins:
          systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
-      simple-jobs: |
+      credentials: |
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - usernamePassword:
+                      scope: GLOBAL
+                      id: "nexus-jenkins"
+                      username: "${nexus-jenkins-username}"
+                      password: "${nexus-jenkins-password}"
+                      description: "Nexus credentials for Jenkins"
+      seed-job: |
         jobs:
           - script: |
               freeStyleJob('seed-job-loader')
-              displayName('Job Definitions Loader')
-              description('Automatically loads job definitions from Github')
+                displayName('Job Definitions Loader')
+                description('Automatically loads job definitions from Github')
 
-              scm {
-                git {
-                  remote {
-                    url('https://github.com/apostoliseq/kind-cluster.git')
-                    credentials('')
+                scm {
+                  git {
+                    remote {
+                      url('https://github.com/apostoliseq/kind-cluster.git')
+                      credentials('')
+                    }
+                    branch('main')
                   }
                 }
-              }
 
-              triggers {
-                scm('H/5 * * * *')
-              }
+                triggers {
+                  scm('H/5 * * * *')
+                }
 
-              steps {
-                dsl {
-                  external('jenkins/jobs/**/*.groovy')
-                  removeAction('DELETE')
-                  removeViewAction('DELETE')
-                  ignoreExisting(false)
+                steps {
+                  dsl {
+                    external('jenkins/jobs/**/*.groovy')
+                    removeAction('DELETE')
+                    removeViewAction('DELETE')
+                    ignoreExisting(false)
+                  }
                 }
               }
       # global-libraries: |
@@ -387,17 +400,7 @@ controller:
       #                   remote: "https://github.com/apostoliseq/jenkins-shared-library.git"
       #                   credentialsId: ""
 
-      credentials: |
-        credentials:
-          system:
-            domainCredentials:
-              - credentials:
-                  - usernamePassword:
-                      scope: GLOBAL
-                      id: "nexus-jenkins"
-                      username: "${nexus-jenkins-username}"
-                      password: "${nexus-jenkins-password}"
-                      description: "Nexus credentials for Jenkins"
+
 
     # Allows adding to the top-level security JCasC section. For legacy,  default the chart includes apiToken configurations
     security:
