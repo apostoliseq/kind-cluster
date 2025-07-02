@@ -377,7 +377,7 @@ controller:
 
                 steps {
                   dsl {
-                    external('jenkins/jobs/**/*.groovy')
+                    external('helm-charts/jenkins/jobs/**/*.groovy')
                     removeAction('DELETE')
                     removeViewAction('DELETE')
                     ignoreExisting(false)
