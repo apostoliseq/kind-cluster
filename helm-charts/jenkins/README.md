@@ -1,4 +1,7 @@
 helm uninstall jenkins -n jenkins
+
+
+
 kubectl apply -f ~/workspace/kind-cluster/jenkins/kubernetes/namespace.yaml
 helm install jenkins ~/workspace/kind-cluster/jenkins/helm-chart/ -n jenkins -f ~/workspace/kind-cluster/jenkins/kubernetes/values.yaml
 kubectl apply -f ~/workspace/kind-cluster/jenkins/kubernetes/rbac.yaml
