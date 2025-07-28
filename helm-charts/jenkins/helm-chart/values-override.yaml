@@ -3,8 +3,10 @@ namespaceOverride: "jenkins"
 controller:
   tag: "2.514-jdk21"
 
-  adminUser: "admin"
-  adminPassword: "admin"
+  admin:
+    existingSecret: "jenkins-admin-secret"
+    userKey: jenkins-admin-username
+    passwordKey: jenkins-admin-password
 
   resources:
     requests:
@@ -27,11 +29,11 @@ controller:
     - ws-cleanup:0.48
     - job-dsl:1.93
 
-  additionalSecrets:
-    - name: nexus-jenkins-username
-      value: admin
-    - name: nexus-jenkins-password
-      value: admin
+  additionalExistingSecrets:
+    - name: nexus-admin-secret
+      keyName: nexus-admin-username
+    - name: nexus-admin-secret
+      keyName: nexus-admin-password
 
   JCasC:
     defaultConfig: true
