@@ -8,6 +8,8 @@ helm upgrade --install jenkins \
     --namespace jenkins \
     --create-namespace \
     --values $JENKINS_HOME/helm-chart/values.yaml \
+    --values $JENKINS_HOME/helm-chart/values-override.yaml \
     --atomic \
     --cleanup-on-fail \
-    --timeout 10m
+    --timeout 10m \
+    --debug

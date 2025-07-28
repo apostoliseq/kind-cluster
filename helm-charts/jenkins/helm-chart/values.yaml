@@ -7,7 +7,7 @@
 # See templates/_helpers.tpl
 # nameOverride:
 # fullnameOverride:
-namespaceOverride: "jenkins"
+# namespaceOverride:
 
 # For FQDN resolving of the controller service. Change this value to match your existing configuration.
 # ref: https://github.com/kubernetes/dns/blob/master/docs/specification.md
@@ -22,7 +22,7 @@ controller:
   # Used for label app.kubernetes.io/component
   componentName: "jenkins-controller"
   image: "jenkins/jenkins"
-  tag: "2.514-jdk21"
+  # tag: "2.414.1-jdk11"
   tagLabel: jdk11
   imagePullPolicy: "Always"
   imagePullSecretName:
@@ -49,8 +49,7 @@ controller:
   # If you disable the non-Jenkins identity store and instead use the Jenkins internal one,
   # you should revert controller.adminUser to your preferred admin user:
   adminUser: "admin"
-  adminPassword: "admin"
-
+  # adminPassword: <defaults to random>
   admin:
     existingSecret: ""
     userKey: jenkins-admin-user
@@ -130,10 +129,9 @@ controller:
     allowPrivilegeEscalation: false
   servicePort: 8080
   targetPort: 8080
-  nodePort: 32080
   # For minikube, set this to NodePort, elsewhere use LoadBalancer
   # Use ClusterIP if your setup includes ingress controller
-  serviceType: NodePort
+  serviceType: ClusterIP
   # Use Local to preserve the client source IP and avoids a second hop for LoadBalancer and Nodeport type services,
   # but risks potentially imbalanced traffic spreading.
   serviceExternalTrafficPolicy:
@@ -246,14 +244,10 @@ controller:
 
   # List of plugins to be install during Jenkins controller start
   installPlugins:
-    - kubernetes:4353.vb_47977da_9417 
-    - workflow-aggregator:608.v67378e9d3db_1
-    - workflow-multibranch:806.vb_b_688f609ee9
-    - git:5.7.0
-    - configuration-as-code:1971.vf9280461ea_89
-    - dark-theme:567.v9d3ca_a_3142f5
-    - ws-cleanup:0.48
-    - job-dsl:1.93
+    - kubernetes:3937.vd7b_82db_e347b_
+    - workflow-aggregator:596.v8c21c963d92d
+    - git:5.1.0
+    - configuration-as-code:1670.v564dc8b_982d0
 
   # Set to false to download the minimum required version of all dependencies.
   installLatestPlugins: true
@@ -306,12 +300,9 @@ controller:
   #  - name: secret-name-1
   #    keyName: password
 
-  additionalSecrets:
-    - name: nexus-jenkins-username
-      value: admin
-    - name: nexus-jenkins-password
-      value: admin
-
+  additionalSecrets: []
+  #  - name: nameOfSecret
+  #    value: secretText
 
   # Generate SecretClaim resources in order to create Kubernetes secrets from HashiCorp Vault using kube-vault-controller.
   # 'name' is name of the secret that will be created in Kubernetes. The Jenkins fullname is prepended to this value.
@@ -339,69 +330,10 @@ controller:
     configUrls: []
     # - https://acme.org/jenkins.yaml
     # Remote URL:s for configuration files.
-    configScripts:
-      welcome-message: |
-       jenkins:
-         systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
-      credentials: |
-        credentials:
-          system:
-            domainCredentials:
-              - credentials:
-                  - usernamePassword:
-                      scope: GLOBAL
-                      id: "nexus-jenkins"
-                      username: "${nexus-jenkins-username}"
-                      password: "${nexus-jenkins-password}"
-                      description: "Nexus credentials for Jenkins"
-      seed-job: |
-        jobs:
-          - script: |
-              freeStyleJob('seed-job-loader') {
-                displayName('Job Definitions Loader')
-                description('Automatically loads job definitions from Github')
-
-                scm {
-                  git {
-                    remote {
-                      url('https://github.com/apostoliseq/kind-cluster.git')
-                      credentials('')
-                    }
-                    branch('main')
-                  }
-                }
-
-                triggers {
-                  scm('H/5 * * * *')
-                }
-
-                steps {
-                  dsl {
-                    external('helm-charts/jenkins/jobs/**/*.groovy')
-                    removeAction('DELETE')
-                    removeViewAction('DELETE')
-                    ignoreExisting(false)
-                  }
-                }
-              }
-      # global-libraries: |
-      #   unclassified:
-      #     globalLibraries:
-      #       libraries:
-      #         - name: "shared-library"
-      #           defaultVersion: "main"
-      #           implicit: false
-      #           allowVersionOverride: true
-      #           includeInChangesets: false
-      #           retriever:
-      #             modernSCM:
-      #               scm:
-      #                 git:
-      #                   remote: "https://github.com/apostoliseq/jenkins-shared-library.git"
-      #                   credentialsId: ""
-
-
-
+    configScripts: {}
+    #  welcome-message: |
+    #    jenkins:
+    #      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
     # Allows adding to the top-level security JCasC section. For legacy,  default the chart includes apiToken configurations
     security:
       apiToken:
@@ -959,7 +891,7 @@ rbac:
 serviceAccount:
   create: true
   # The name of the service account is autogenerated by default
-  name: "jenkins"
+  name:
   annotations: {}
   extraLabels: {}
   imagePullSecretName:
