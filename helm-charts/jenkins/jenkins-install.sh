@@ -11,6 +11,10 @@ JENKINS_ENV_FILE="$JENKINS_HOME/jenkins.env"
 NEXUS_ADMIN_SECRET="nexus-admin-secret"
 NEXUS_ENV_FILE="$JENKINS_HOME/nexus.env"
 
+if ! kubectl get namespace $NAMESPACE >/dev/null 2>&1; then
+    kubectl create namespace $NAMESPACE
+fi
+
 # Check if secret exists
 if ! kubectl get secret $JENKINS_ADMIN_SECRET -n $NAMESPACE >/dev/null 2>&1; then
     echo "Creating jenkins-admin secret..."
